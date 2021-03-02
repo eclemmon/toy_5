@@ -4,9 +4,9 @@ ServerOptions.inDevices;
 
 // 0. Boot Server
 (
-Server.default.options.outDevice_("Multi-Output Device");
+Server.default.options.outDevice_("multi_output_scarlett");
 // Server.default.options.outDevice_("BlackHole 16ch");
-Server.default.options.inDevice_("MacBook Pro Microphone");
+Server.default.options.inDevice_("Scarlett 2i2 USB");
 s = Server.default.boot;
 )
 
@@ -27,9 +27,9 @@ SynthDef(\chimes2, {
 	var trig = Trig.kr(KeyState.kr(51, maxval:1, lag: 0.01));
 	var env = EnvGen.kr(Env.perc(0.05, MouseY.kr(0.05, 2)), gate: trig);
 	var freq = Index.ar(bufnum, MouseX.kr(0, BufSamples.kr(bufnum)));
-	var mouseTrig = MouseButton.kr(1, SinOsc.ar(MouseY.kr(1, 100, lag: 0.01), mul: 1));
+	var mouseTrig = MouseButton.kr(1, SinOsc.ar(MouseY.kr(1, 100, lag: 0.01), mul: 0.5));
 	var sig = SinOsc.ar(freq.midicps) * env * mouseTrig;
-	var amplitude = MouseButton.kr(amp, 4);
+	var amplitude = MouseButton.kr(amp, 1);
 	Out.ar(out, sig * amplitude.dup);
 }).add;
 
@@ -121,7 +121,7 @@ b.getn(0, b.numFrames, {|msg| msg.postln});
 	~tFuncArray.do({arg aTask, i;
 		// aTask.postln;
 		if(i % 32 == 0) {
-			"Phrase ".catArgs(phraseNo+1, " beginning.").postln;
+			"Phrase ".catArgs(phraseNo, " is complete.").postln;
 			phraseNo = phraseNo + 1;
 		} { "Phrase" };
 		aTask.play;
@@ -136,14 +136,27 @@ b.getn(0, b.numFrames, {|msg| msg.postln});
 // Initializes window that captures key presses and displays key state changes as a 'confirmation' that a key has been entered.
 (
 w = Window.new("I catch keystrokes", Rect(600,600,600,600));
-w.view.keyDownAction = { arg view, char, modifiers, unicode, keycode;
-	w.background = Color.green;
+
+w.view.mouseDownAction = {
+	w.view.keyDownAction = { arg view, char, modifiers, unicode, keycode;
+		w.background = Color.red(val: 1.0.rand, alpha: 1.0.rand);
+	};
 };
+
+w.view.mouseUpAction = {
+	w.view.keyDownAction = { arg view, char, modifiers, unicode, keycode;
+		w.background = Color.rand(lo:0.3, hi:0.9);
+	};
+};
+
 w.view.keyUpAction = {w.background = Color.gray};
+
 );
 
 (
 w.front; // something safe to type on
+w.fullScreen;
+CmdPeriod.doOnce({w.close;});
 );
 ~tFuncArrayTask.play;
 )
