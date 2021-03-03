@@ -42,6 +42,24 @@ SynthDef(\buzzy_bramm2, {
 	Out.ar(out, Pan2.ar(sig, pan, trigger));
 }).add;
 
+SynthDef(\fog_horn, {
+	arg out=0, dur=15, amp, attack=0.1, release=0.1, decay_time=0.1, decay_amp=0.7, freq=440, fmod_freq=533, fmod_mul=200, sustain_freq=660, pos=0, filter_env_start_freq=880, filter_env_end_freq=440, filter_sus_dur=15, filter_decay_dur=0.1, filter_release_time=0.1, tail_length=4, tail_length_level=0.1;
+	var pan, sig, env, filter, carrier, modulator, fmod_env, filter_env, trig;
+	trig = Trig.kr(KeyState.kr(51, maxval:1, lag: 0.01));
+	fmod_env = EnvGen.kr(Env([0,1,1,tail_length_level,tail_length_level, 0], [attack, (dur/2)-attack-(tail_length/2)-0.1, tail_length, (dur/2)-(tail_length/2), 0.1], curve: 'wel'), gate: trig);
+	filter_env = EnvGen.kr(
+		Env([0.1, filter_env_start_freq, sustain_freq, sustain_freq, filter_env_end_freq], [attack, filter_decay_dur, filter_sus_dur-attack-filter_decay_dur-release, filter_release_time], curve: -3), gate: trig);
+	modulator = SinOsc.ar(MouseY.kr(0+fmod_freq, 1000+fmod_freq, warp: 1, lag: 0.2), mul: fmod_mul);
+	carrier = SinOsc.ar(freq+(modulator*fmod_env));
+	env = EnvGen.kr(
+		Env([0,1,decay_amp,1,0], [attack, decay_time, dur-attack-release-decay_time-tail_length, tail_length], curve: ['wel', -2.0, -3, 0, -4]),
+		gate: trig);
+	sig = carrier * env;
+	filter = LPF.ar(sig, filter_env);
+	pan = Pan2.ar(filter, pos: pos, level: amp);
+	Out.ar(out, pan);
+}).add;
+
 // Progression, Modify as you see fit!
 ~urprog = [
 	[57, 64, 69],
@@ -108,9 +126,11 @@ SynthDef(\buzzy_bramm2, {
 		// now generate the notes
 		if (freqs.size > 3) {
 			~buzzy_bram2.set(\freq, freqs[0]);
+			~fog_horn.set(\freq, frequencies[0], \fmod_freq, frequencies[0]);
 			// Synth(\buzzy_bramm, [\freq_list, freqs]);
 			} {
 			~buzzy_bram1.set(\freq, freqs[0]);
+				~fog_horn.set(\freq, frequencies[0], \fmod_freq, frequencies[0]);
 			// Synth(\buzzy_bramm2, [\freq_list, freqs]);
 			};
 	}); // this is where the Task ends
@@ -134,18 +154,8 @@ SynthDef(\buzzy_bramm2, {
 });
 )
 
-// ########   2. Boot it up and then click the mouse button  ########
+// ########   2. Boot it up and then click the mouse button or use delete for freq mod! ########
 (
-//(
-// Initializes window that captures key presses and displays key state changes as a 'confirmation' that a key has been entered.
-// w = Window.new("I catch keystrokes", Rect(600,600,600,600));
-// w.view.keyDownAction = { arg view, char, modifiers, unicode, keycode;
-// 	w.background = Color.green;
-// };
-// w.view.keyUpAction = {w.background = Color.gray};
-// );
-
-
 (
 s.waitForBoot {
 	w = Window.new("I catch keystrokes", Window.screenBounds, false, false);
@@ -170,12 +180,27 @@ s.waitForBoot {
 };
 );
 
-/*(
-w.front; // something safe to type on
-);*/
-
 Synth(\reverb3, [\in, 97]);
 ~buzzy_bram1 = Synth(\buzzy_bramm, [\freq_list, [ 33, 40, 45 ], \out, 97]);
 ~buzzy_bram2 = Synth(\buzzy_bramm2, [\freq_list, [ 25, 33, 33, 40 ], \out, 97]);
+~fog_horn = Synth(\fog_horn, [
+	\out, 97,
+	\amp, 0.1,
+	\dur, 5,
+	\attack, 0.01,
+	\decay_time, 0.4,
+	\decay_amp, 0.1,
+	\sustain_freq, 2000.rand,
+	\pos, 0,
+	\filter_env_start_freq, 660,
+	\filter_env_end_freq, 330,
+	\filter_decay_dur, 0.2,
+	\filter_release_time, 3.0,
+	\tail_length, 3.0,
+	\tail_length_level, 0.7,
+	\freq, 60.midicps,
+	\fmod_freq, 24.midicps
+]);
+
 ~tFuncArrayTask2.play;
 )
