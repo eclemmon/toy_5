@@ -23,11 +23,11 @@ SynthDef(\reverb, {
 }).add;
 
 SynthDef(\chimes2, {
-	arg out=0, freq_list=#[0,0,0,0], amp=0.2, dur=1, bufnum;
+	arg out=0, freq_list=#[0,0,0,0], amp=0.1, dur=1, bufnum;
 	var trig = Trig.kr(KeyState.kr(51, maxval:1, lag: 0.01));
 	var env = EnvGen.kr(Env.perc(0.05, MouseY.kr(0.05, 2)), gate: trig);
 	var freq = Index.ar(bufnum, MouseX.kr(0, BufSamples.kr(bufnum)));
-	var mouseTrig = MouseButton.kr(1, SinOsc.ar(MouseY.kr(1, 100, lag: 0.01), mul: 0.5));
+	var mouseTrig = MouseButton.kr(1, SinOsc.ar(MouseY.kr(50, 100, warp: 1, lag: 0.1), mul: 2));
 	var sig = SinOsc.ar(freq.midicps) * env * mouseTrig;
 	var amplitude = MouseButton.kr(amp, 1);
 	Out.ar(out, sig * amplitude.dup);
@@ -135,29 +135,34 @@ b.getn(0, b.numFrames, {|msg| msg.postln});
 (
 // Initializes window that captures key presses and displays key state changes as a 'confirmation' that a key has been entered.
 (
-w = Window.new("I catch keystrokes", Rect(600,600,600,600));
 
-w.view.mouseDownAction = {
+s.waitForBoot {
+	w = Window.new("I catch keystrokes", Window.screenBounds, false, false);
+	~scope = QScope2(w, w.bounds);
+	~bus_scope_synth = BusScopeSynth(s);
+	~scope.server = s;
+	~bus_scope_synth.play(4096, Bus('audio', 0, 2, s));
+	s.sync;
+	~scope.bufnum= ~bus_scope_synth.bufferIndex;
+	~scope.server= s;
+	~scope.start;
+	~scope.style = 1;
+	~scope.yZoom = 20;
+	~scope.xZoom = 1;
+	~bus_scope_synth.setCycle(4096);
+	~scope.waveColors = [Color.rand(lo:0.3, hi:0.9), Color.rand(lo:0.3, hi:0.9), Color.rand(lo:0.3, hi:0.9)];
+
 	w.view.keyDownAction = { arg view, char, modifiers, unicode, keycode;
-		w.background = Color.red(val: 1.0.rand, alpha: 1.0.rand);
-	};
+		~scope.waveColors = [Color.rand(lo:0.3, hi:0.9), Color.rand(lo:0.3, hi:0.9), Color.rand(lo:0.3, hi:0.9)];
+		};
+	w.view.keyUpAction = {w.background = Color.gray};
+	w.front; // something safe to type on
+	w.fullScreen;
+	CmdPeriod.doOnce({w.close;});
 };
-
-w.view.mouseUpAction = {
-	w.view.keyDownAction = { arg view, char, modifiers, unicode, keycode;
-		w.background = Color.rand(lo:0.3, hi:0.9);
-	};
-};
-
-w.view.keyUpAction = {w.background = Color.gray};
 
 );
 
-(
-w.front; // something safe to type on
-w.fullScreen;
-CmdPeriod.doOnce({w.close;});
-);
 ~tFuncArrayTask.play;
 )
 

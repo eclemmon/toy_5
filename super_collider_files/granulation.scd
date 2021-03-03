@@ -14,7 +14,7 @@ s = Server.default.boot;
 // ########## 1. Initialize Everything ##########
 (
 b = Buffer.read(s, Platform.resourceDir +/+ "sounds/a11wlk01-44_1.aiff");
-c = ~helicopter_buffer = Buffer.readChannel(s,"/Users/ericlemmon/Desktop/Guademeaus Compdown/helicopter_music.wav", 0, channels: [0]);
+c = ~helicopter_buffer = Buffer.readChannel(s,"/Users/ericlemmon/Library/Mobile\ Documents/com\~apple\~CloudDocs/Ensemble\ Decipher/Repertoire/1_Lemmon_Toy_5/helicopter_music.wav", 0, channels: [0]);
 
 SynthDef.new(\low_creepy_granulation, {
 	arg out, gate, amp, sndbuf, grainSize, freq, trigRate, maxRate;
@@ -38,7 +38,6 @@ SynthDef.new(\low_creepy_granulation, {
 		pan: pan1,
 		envbufnum: -1);
 	sig = SinOsc.ar(freq.midicps) * grain * env * amplitude * trig;
-	// pan2 = Pan2.ar(sig, pos: MouseX.kr(-1, 1));
 	Out.ar(out, sig)
 }).add;
 
@@ -152,7 +151,7 @@ d.getn(0, d.numFrames, {|msg| msg.postln});
 	~tFuncArray.do({arg aTask, i;
 		// aTask.postln;
 		if(i % 32 == 0) {
-			"Phrase ".catArgs(phraseNo+1, " beginning.").postln;
+			"Phrase ".catArgs(phraseNo, " is complete.").postln;
 			phraseNo = phraseNo + 1;
 		} { "Phrase" };
 		aTask.play;
@@ -165,17 +164,33 @@ d.getn(0, d.numFrames, {|msg| msg.postln});
 // ########   2. Boot it up and then press 'delete' for creepy granulation and 'return' for helicopters  ########
 (
 (
-w = Window.new("I catch keystrokes", Rect(600,600,600,600));
-w.view.keyDownAction = { arg view, char, modifiers, unicode, keycode;
-	w.background = Color.green;
+s.waitForBoot {
+	w = Window.new("I catch keystrokes", Window.screenBounds, false, false);
+	~scope = QScope2(w, w.bounds);
+	~bus_scope_synth = BusScopeSynth(s);
+	~scope.server = s;
+	~bus_scope_synth.play(4096, Bus('audio', 0, 2, s));
+	s.sync;
+	~scope.bufnum= ~bus_scope_synth.bufferIndex;
+	~scope.server= s;
+	~scope.start;
+	~scope.style = 0;
+	~scope.yZoom = 5;
+	~bus_scope_synth.setCycle(1024);
+	w.view.keyDownAction = { arg view, char, modifiers, unicode, keycode;
+		~scope.waveColors = [Color.rand(lo:0.3, hi:0.9), Color.rand(lo:0.3, hi:0.9), Color.rand(lo:0.3, hi:0.9)];
+		};
+	w.view.keyUpAction = {w.background = Color.gray};
+	w.front; // something safe to type on
+	w.fullScreen;
+	CmdPeriod.doOnce({w.close;});
 };
-w.view.keyUpAction = {w.background = Color.gray};
-);
-
-(
-w.front; // something safe to type on
 );
 Synth(\low_creepy_granulation, [\out, 0, \gate, 1, \amp, 0.5, \sndbuf, b, \grainSize, 0.5, \freq, 40, \trigRate, 20, \maxRate, 0.001]);
 Synth(\buf_grain_test, [\sndbuf, c, \envbuf, -1, \out, 0]);
 ~tFuncArrayTask.play;
 )
+
+
+
+
