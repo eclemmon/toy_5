@@ -158,8 +158,8 @@ SynthDef(\fog_horn, {
 (
 (
 s.waitForBoot {
-	w = Window.new("I catch keystrokes", Window.screenBounds, false, false);
-	~scope = QScope2(w, w.bounds);
+	w = Window.new("I catch keystrokes", Window.availableBounds, true, true);
+	~scope = QScope2(w.view, w.view.bounds);
 	~bus_scope_synth = BusScopeSynth(s);
 	~scope.server = s;
 	~bus_scope_synth.play(4096, Bus('audio', 0, 2, s));
@@ -175,7 +175,7 @@ s.waitForBoot {
 		};
 	w.view.mouseUpAction = {w.background = Color.gray};
 	w.front; // something safe to type on
-	w.fullScreen;
+	// w.fullScreen; // COMMENT THIS IN IF YOU HAVE A DUAL MONITOR SET UP
 	CmdPeriod.doOnce({w.close;});
 };
 );
