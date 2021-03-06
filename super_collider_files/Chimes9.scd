@@ -5,8 +5,10 @@ ServerOptions.inDevices;
 // 0. Boot Server
 (
 Server.default.options.outDevice_("multi_output_scarlett");
-// Server.default.options.outDevice_("BlackHole 16ch");
 Server.default.options.inDevice_("Scarlett 2i2 USB");
+// Server.default.options.outDevice_("MacBook Pro Speakers");
+// Server.default.options.outDevice_("BlackHole 16ch");
+// Server.default.options.inDevice_("MacBook Pro Microphone");
 s = Server.default.boot;
 )
 
@@ -23,10 +25,10 @@ SynthDef(\reverb, {
 }).add;
 
 SynthDef(\chimes2, {
-	arg out=0, freq_list=#[0,0,0,0], amp=0.1, dur=1, bufnum;
+	arg out=0, amp=0.1, dur=1, bufnum;
 	var trig = Trig.kr(KeyState.kr(51, maxval:1, lag: 0.01));
 	var env = EnvGen.kr(Env.perc(0.05, MouseY.kr(0.05, 2)), gate: trig);
-	var freq = Index.ar(bufnum, MouseX.kr(0, BufSamples.kr(bufnum)));
+	var freq = Index.kr(bufnum, MouseX.kr(0, BufSamples.kr(bufnum)));
 	var mouseTrig = MouseButton.kr(1, SinOsc.ar(MouseY.kr(50, 100, warp: 1, lag: 0.1), mul: 2));
 	var sig = SinOsc.ar(freq.midicps) * env * mouseTrig;
 	var amplitude = MouseButton.kr(amp, 1);
@@ -91,7 +93,7 @@ b = Buffer.alloc(s, 4);
 b.setn(0, [57, 64, 69, 57]);
 b.getn(0, b.numFrames, {|msg| msg.postln});
 ~reverb = Synth(\reverb, [\in, 99]);
-~synth = Synth.new(\chimes2, [\out, 99, \freq_list, b.getn(0, b.numFrames), \bufnum, b]);
+~synth = Synth.new(\chimes2, [\out, 99, \bufnum, b]);
 
 ~tFunc = {arg frequencies, numnotes;
 	~mainTask = Task({
@@ -162,7 +164,9 @@ s.waitForBoot {
 };
 
 );
+)
 
+(
 ~tFuncArrayTask.play;
 )
 

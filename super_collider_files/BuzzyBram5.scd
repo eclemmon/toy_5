@@ -154,7 +154,7 @@ SynthDef(\fog_horn, {
 });
 )
 
-// ########   2. Boot it up and then click the mouse button or use delete for freq mod! ########
+// ########   2. Boot up the synths and GUI! ########
 (
 (
 s.waitForBoot {
@@ -181,8 +181,8 @@ s.waitForBoot {
 );
 
 Synth(\reverb3, [\in, 97]);
-~buzzy_bram1 = Synth(\buzzy_bramm, [\freq_list, [ 33, 40, 45 ], \out, 97]);
-~buzzy_bram2 = Synth(\buzzy_bramm2, [\freq_list, [ 25, 33, 33, 40 ], \out, 97]);
+~buzzy_bram1 = Synth(\buzzy_bramm, [\freq, 33, \out, 97]);
+~buzzy_bram2 = Synth(\buzzy_bramm2, [\freq, 3, \out, 97]);
 ~fog_horn = Synth(\fog_horn, [
 	\out, 97,
 	\amp, 0.1,
@@ -201,6 +201,8 @@ Synth(\reverb3, [\in, 97]);
 	\freq, 60.midicps,
 	\fmod_freq, 24.midicps
 ]);
-
+)
+// ########   3. Start the task on go! ########
+(
 ~tFuncArrayTask2.play;
 )
