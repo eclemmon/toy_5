@@ -13,7 +13,7 @@ SynthDef(\chimes2, {
 	var trig = Trig.kr(KeyState.kr(51, maxval:1, lag: 0.01));
 	var env = EnvGen.kr(Env.perc(0.05, MouseY.kr(0.05, 2)), gate: trig);
 	var freq = Index.ar(bufnum, MouseX.kr(0, BufSamples.kr(bufnum)));
-	var mouseTrig = MouseButton.kr(1, SinOsc.ar(MouseY.kr(50, 100, warp: 1, lag: 0.1), mul: 2));
+	var mouseTrig = MouseButton.kr(1, Lag.ar(SinOsc.ar(MouseY.kr(50, 100, warp: 1, lag: 0.1), mul: 2)));
 	var sig = SinOsc.ar(Lag.ar(freq.midicps, 0.075)) * env * mouseTrig;
 	var amplitude = MouseButton.kr(amp, 0.9);
 	Out.ar(out, sig * amplitude.dup);
