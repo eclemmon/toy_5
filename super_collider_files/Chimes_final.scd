@@ -12,7 +12,6 @@ Server.default.options.inDevice_("Scarlett 2i2 USB");
 s = Server.default.boot;
 )
 
-
 // ########## 1. Initialize Everything (DO IT TWICE!) ##########
 (
 var cwd = thisProcess.nowExecutingPath.dirname;
@@ -27,7 +26,6 @@ thisProcess.interpreter.executeFile(cwd ++ "/chimes/gui.scd");
 ~tFuncArrayTask.play;
 )
 )
-
 
 // If you neeed to pause it to discuss...
 (
