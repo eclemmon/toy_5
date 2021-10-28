@@ -10,7 +10,6 @@ Server.default.options.inDevice_("MacBook Pro Microphone");
 s = Server.default.boot;
 )
 
-
 // ########## 1. Initialize Everything ##########
 (
 var cwd = thisProcess.nowExecutingPath.dirname;
