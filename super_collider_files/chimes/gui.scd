@@ -16,10 +16,46 @@ s.waitForBoot {
 	~scope.xZoom = 1;
 	~bus_scope_synth.setCycle(4096);
 	~scope.waveColors = [Color.rand(lo:0.3, hi:0.9), Color.rand(lo:0.3, hi:0.9), Color.rand(lo:0.3, hi:0.9)];
-
+	~klank = Synth(\hermannKlank);
+	~klankOn = False;
+	~klankAmp = 0;
 	w.view.keyDownAction = { arg view, char, modifiers, unicode, keycode;
 		~scope.waveColors = [Color.rand(lo:0.3, hi:0.9), Color.rand(lo:0.3, hi:0.9), Color.rand(lo:0.3, hi:0.9)];
+		// turn on off
+		if ((keycode == 36), {
+			if ((~klankOn == False), {
+				~klankAmp = 0.5;
+				~klank.set(\amp, ~klankAmp);
+				~klankOn = True;
+			}, {
+				~klankAmp = 0;
+				~klank.set(\amp, ~klankAmp);
+				~klankOn = False;
+			});
+		});
+
+		if ((keycode == 47), {
+			if ((~klankAmp <= 0.7), {
+				~klankAmp = ~klankAmp + 0.05;
+				~klank.set(\amp, ~klankAmp);
+				~klankOn = True;
+			});
+		});
+
+		if ((keycode == 43), {
+			if ((~klankAmp > 0 && ~klankOn == True), {
+				~klankAmp = ~klankAmp - 0.05;
+				~klank.set(\amp, ~klankAmp);
+				~klankAmp.postln;
+				if ((~klankAmp < 0.001), {
+					~klankAmp = 0;
+					~klank.set(\amp, ~klankAmp);
+					~klankOn = False;
+				});
+			});
+		});
 		};
+
 	w.view.keyUpAction = {w.background = Color.gray};
 	w.front; // something safe to type on
 	// w.fullScreen; // COMMENT THIS IN IF YOU HAVE A DUAL MONITOR SET UP

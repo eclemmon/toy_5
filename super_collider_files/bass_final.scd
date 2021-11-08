@@ -4,7 +4,7 @@ ServerOptions.outDevices;
 
 // 0. Boot Server
 (
-Server.default.options.outDevice_("Multi-Output Device");
+Server.default.options.outDevice_("External Headphones");
 s = Server.default.boot;
 )
 
