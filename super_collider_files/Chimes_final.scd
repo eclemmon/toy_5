@@ -7,7 +7,7 @@ ServerOptions.inDevices;
 /*Server.default.options.outDevice_("multi_output_scarlett");*/
 // Server.default.options.inDevice_("Scarlett 2i2 USB");
 Server.default.options.outDevice_("External Headphones");
-// Server.default.options.outDevice_("BlackHole 16ch");
+// Server.default.options.outDevice_("MacBook Pro Speakers");
 Server.default.options.inDevice_("MacBook Pro Microphone");
 s = Server.default.boot;
 )

@@ -23,7 +23,7 @@ s.waitForBoot {
 );
 
 Synth(\reverb3, [\in, 97]);
-~buzzy_bram1 = Synth(\buzzy_bramm, [\freq, 33, \out, 97]);
+~buzzy_bram1 = Synth(\buzzy_bramm1, [\freq, 33, \out, 97]);
 ~buzzy_bram2 = Synth(\buzzy_bramm2, [\freq, 3, \out, 97]);
 ~fog_horn = Synth(\fog_horn, [
 	\out, 97,

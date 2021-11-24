@@ -8,7 +8,7 @@ SynthDef(\reverb3, {
 	Out.ar(out, Pan2.ar(reverb, pan));
 }).add;
 
-SynthDef(\buzzy_bramm, {
+SynthDef(\buzzy_bramm1, {
 	arg amp=0.9, out=0, freq;
 	var pan, sig, trigger, saw, lpf;
 	saw = LFSaw.ar(freq, mul:0.1);
@@ -129,7 +129,7 @@ SynthDef(\fog_horn, {
 
 // iterate through the array of Tasks, play them, and wait in between, with a Task of Tasks
 
-~tFuncArrayTask2 = Task({
+~tFuncArrayTask = Task({
 	var phraseNo = 0;
 	~tFuncArray2.do({arg aTask, i;
 		if(i % 32 == 0) {

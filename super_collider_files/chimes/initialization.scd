@@ -19,11 +19,32 @@ SynthDef(\chimes2, {
 	Out.ar(out, sig * amplitude.dup);
 }).add;
 
+SynthDef(\chimes3, {
+	arg out=50, amp=0.1, dur=1, bufnum;
+	var trig = Trig.kr(KeyState.kr(51, maxval:1, lag: 0.01));
+	var env = EnvGen.kr(Env.perc(0.05, MouseY.kr(0.05, 2)), gate: trig);
+	var freq = WrapIndex.ar(bufnum, MouseX.kr(0, BufSamples.kr(bufnum) * 3));
+	var mouseTrig = MouseButton.kr(1, Lag.ar(SinOsc.ar(MouseY.kr(50, 100, warp: 1, lag: 0.1), mul: 8)));
+	var sig = SinOsc.ar(Lag.ar(freq.midicps, 0.075)) * env * mouseTrig;
+	var amplitude = MouseButton.kr(amp, 0.9);
+	Out.ar(out, sig * amplitude.dup);
+}).add;
+
 SynthDef(\delay, {
 	arg in=89, out=99, amp=0.7, delayTime=1;
 	var input, delay;
 	input = In.ar(in);
 	delay = DelayC.ar(input, maxdelaytime: delayTime, delaytime: delayTime);
+	Out.ar(out, [delay, delay]);
+}).add;
+
+SynthDef(\delay2, {
+	arg in=50, out=99, amp=0.7, randArray = #[0.2, 0.33, 0.5, 0.7, 0.8463, 1.3737, 1, 1.657347, 1.86484, 2];
+	var input, delay, arrayIndex, delayTime;
+	arrayIndex = TIRand.ar(lo: 0, hi: 9, trig: Trig.ar(KeyState.kr(51, maxval:1, lag: 0)));
+	delayTime = Select.kr(arrayIndex, randArray);
+	input = In.ar(in);
+	delay = DelayC.ar(input, maxdelaytime: Lag.kr(delayTime, 0.5), delaytime: Lag.kr(delayTime, 0.5));
 	Out.ar(out, [delay, delay]);
 }).add;
 
@@ -99,10 +120,7 @@ b = Buffer.alloc(s, 4);
 b.setn(0, [57, 64, 69, 57]);
 b.getn(0, b.numFrames, {|msg| msg.postln});
 ~reverb = Synth(\reverb, [\in, 99]);
-/*~delay1 = Synth(\delay, [\in, 89, \delayTime, 0.375]);
-~delay = Synth(\delay, [\in, 89, \delayTime, 0.5]);*/
-~synth = Synth.new(\chimes2, [\out, 89, \bufnum, b]);
-~synthDelay = Synth.new(\chimes2, [\out, 99, \bufnum, b]);
+~synth = Synth.new(\chimes2, [\out, 99, \bufnum, b]);
 
 ~tFunc = {arg frequencies, numnotes;
 	~mainTask = Task({
