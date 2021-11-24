@@ -1,8 +1,7 @@
+(
 var cwd = thisProcess.nowExecutingPath.dirname;
-b = Buffer.read(s, cwd +/+ "samples/a11wlk01-44_1.aiff");
-c = Buffer.readChannel(s, cwd +/+ "samples/helicopter.wav", 0, channels: [0]);
 
-SynthDef.new(\low_creepy_granulation, {
+SynthDef(\low_creepy_granulation, {
 	arg out, gate, amp, sndbuf, grainSize, freq, trigRate, maxRate;
 	var pan1, pan2, env, sig, grain, amplitude, trig;
 	trig = KeyState.kr(51, maxval:1, lag: 0.01);
@@ -27,15 +26,15 @@ SynthDef.new(\low_creepy_granulation, {
 	Out.ar(out, sig)
 }).add;
 
-SynthDef(\buf_grain_test, { |out, gate = 1, amp = 1, sndbuf, envbuf|
+SynthDef(\buf_grain_test, {
+	arg out, gate = 1, amp = 1, sndbuf, envbuf;
     var env, play_buf, grain_buf, trig, amplitude;
 	amplitude = MouseY.kr(0,0.99);
 	trig = KeyState.kr(36, maxval:1, lag: 0.01);
     env = EnvGen.kr(
         Env([0, 1, 0], [1, 1], \sin, 1),
         gate,
-        levelScale: amp,
-        doneAction: Done.freeSelf);
+		levelScale: amp);
 	grain_buf = GrainBuf.ar(
 		numChannels: 2,
 		trigger: Impulse.kr(10),
@@ -49,9 +48,6 @@ SynthDef(\buf_grain_test, { |out, gate = 1, amp = 1, sndbuf, envbuf|
     Out.ar(out, grain_buf * env * trig * amplitude)
 }).add;
 
-
-// UNIMPORTANT FOR THIS PART BUT NECESSARY TO KEEP TRACK OF OVERALL PROGRESSION OF PIECE
-// Progression, Modify as you see fit!
 // 32 chords
 ~urprog = [
 	[57, 64, 69],
@@ -103,27 +99,14 @@ SynthDef(\buf_grain_test, { |out, gate = 1, amp = 1, sndbuf, envbuf|
 ~progression = ~progression ++ [57, 64, 69];
 ~progression;
 
-
-// Initialize buffers and synths for playback.
-d = Buffer.alloc(s, 4);
-d.setn(0, [57, 64, 69, 57]);
-d.getn(0, d.numFrames, {|msg| msg.postln});
+~progressBarIndex = 0;
 
 ~tFunc = {arg frequencies, numnotes;
 	~mainTask = Task({
-		var freqs, durs, amps;
-		// frequencies for the notes, passed in from progression
-		freqs = frequencies;
-
-		// Just a conditional that makes all the notes arrays the same size.
-		if (freqs.size > 3) {
-			freqs = freqs;
-			d.setn(0, freqs);
-		} {
-			freqs = freqs ++ freqs[0];
-			d.setn(0, freqs);
-		};
-		d.getn(0, d.numFrames, {|msg| msg.postln});
+		{
+			~progressBar[~progressBarIndex].background = Color.yellow;
+			~progressBarIndex = ~progressBarIndex + 1;
+		}.defer;
 
 	}); // this is where the Task ends
 };
@@ -145,3 +128,4 @@ d.getn(0, d.numFrames, {|msg| msg.postln});
 		aTask.stop;
 	});
 });
+)

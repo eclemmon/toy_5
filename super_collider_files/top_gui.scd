@@ -46,6 +46,9 @@ startButton = Button(compositeView, 200@40)
 .action_({arg butt;
 	var cwd;
 
+	// Set inputs and outputs to equal so Server will always boot.
+	Server.default.options.numInputBusChannels = 2;
+	Server.default.options.numOutputBusChannels = 2;
 	if ((outDevice == "Default"), {
 		Server.default.options.outDevice = nil;
 	}, {
@@ -64,9 +67,9 @@ startButton = Button(compositeView, 200@40)
 	cwd = ~cwd ++ "/" ++ part;
 	cwd.postln;
 	s.waitForBoot {
-
 		thisProcess.interpreter.executeFile(cwd ++ "/initialization.scd");
 		thisProcess.interpreter.executeFile(cwd ++ "/initialization.scd");
+		0.5.wait;
 		thisProcess.interpreter.executeFile(cwd ++ "/gui.scd");
 		0.5.wait;
 		~tFuncArrayTask.play;
@@ -106,10 +109,20 @@ closeButton = Button(compositeView, 200@40)
 .font_(Font("Impact", 30))
 .action_({arg butt;
 	w.close;
+	thisProcess.shutdown;
+	0.exit;
 });
 
 // Bring up window
 w.front;
-CmdPeriod.doOnce { w.close };
+CmdPeriod.doOnce { ~endProgram };
+
+~endProgram = {
+	w.close;
+	CmdPeriod.run;
+	Server.killAll;
+	0.exit;
+};
+
 
 )

@@ -52,11 +52,11 @@ SynthDef(\hermannKlank, {
 	arg out=99, amp=0;
 	var env = Lag.kr(amp, lagTime:0.2);
 	var sig = Array.fill(7, {arg i;
-			DynKlank.ar(`[[1,2,3,4,5,8,9,11,14], nil, [10,5,3,2,1,1,0.2,0.2,0.1]],
+		DynKlank.ar(`[[1,2,3,4,5,8,9,11,14], nil, [10,5,3,2,1,1,0.2,0.2,0.1]],
 			input: Decay.ar(
 				Impulse.ar(MouseX.kr((0.5*i+1), (1*i+1), warp: 1),
 					0.1, WhiteNoise.ar(0.02))),
-				freqscale: MouseY.kr((i*7+20).midicps, (i*7+100).midicps, warp: 1))});
+			freqscale: MouseY.kr((i*7+20).midicps, (i*7+100).midicps, warp: 1))});
 	Out.ar(out, 0.2*sig!2*0.5*env);
 }).add;
 
@@ -114,6 +114,8 @@ SynthDef(\hermannKlank, {
 ~progression = ~progression ++ [57, 64, 69];
 ~progression;
 
+~progressBarIndex = 0;
+
 
 // Initialize buffers and synths for playback.
 b = Buffer.alloc(s, 4);
@@ -137,6 +139,11 @@ b.getn(0, b.numFrames, {|msg| msg.postln});
 			b.setn(0, freqs);
 		};
 		b.getn(0, b.numFrames, {|msg| msg.postln});
+
+		{
+			~progressBar[~progressBarIndex].background = Color.yellow;
+			~progressBarIndex = ~progressBarIndex + 1;
+		}.defer;
 
 	}); // this is where the Task ends
 };

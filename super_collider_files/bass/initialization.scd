@@ -99,6 +99,8 @@ SynthDef(\fog_horn, {
 ~progression = ~progression ++ [57, 64, 69];
 ~progression;
 
+~progressBarIndex = 0;
+
 ~tFunc2 = {arg frequencies;
 	var task;
 	task = Task({
@@ -121,6 +123,10 @@ SynthDef(\fog_horn, {
 			~fog_horn.set(\freq, frequencies[0], \fmod_freq, frequencies[0]);
 			// Synth(\buzzy_bramm2, [\freq_list, freqs]);
 			};
+		{
+			~progressBar[~progressBarIndex].background = Color.yellow;
+			~progressBarIndex = ~progressBarIndex + 1;
+		}.defer;
 	}); // this is where the Task ends
 };
 
