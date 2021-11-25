@@ -18,7 +18,7 @@ To run the sound generation portion of the work, download the github repository 
 
 or by clicking <a href=https://github.com/eclemmon/toy_5/archive/refs/heads/master.zip>here</a>.
 
-Once the files have been opened, navigate to the `/toy_5/super_collider_files/` directory and double click on the `boot.command` shell script to run the software. Then, simply follow the instructions in the score and in the SuperCollider files.
+Once the files have been downloaded, navigate to the `/toy_5/super_collider_files/` directory and double click on the `boot.command` shell script to run the software. Then, simply follow the instructions in the score and in the SuperCollider files.
 It is recommended that the bass part is performed by maximum two players, and the chimes parts maximum four. The granulation part should be played by one or two players.
 
 This software has been tested on SuperCollider 3.12, and macOS 12.0.1 (Monterey), but it should work on older versions of macOS as well as long as a recent, stable version of SuperCollider has been installed.
