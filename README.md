@@ -10,15 +10,30 @@ Sidney Fels, while also providing the opportunity for more rehearsed performance
 The work’s visuals and sound are controlled by
 mouse cursor position, mouse clicks, and keystrokes through OSC. In the performance linked above, they are then shared,
 in this case through the consumer-grade teleconferencing software Zoom. The code
-for audio generation was written in SuperCollider, while the visuals were coded in hydra.  
+for audio generation was written in SuperCollider, while the visuals were coded in the JavaScript based live-coding and visualization package, <a href=https://github.com/ojack/hydra>hydra</a>.  
 
-To run the sound generation portion of the work, download the github repository by opening terminal and pasting:
+## Installation
+
+Download and install SuperCollider:
+
+https://supercollider.github.io/download
+
+or if you have brew installed:
+
+`brew install --cask supercollider`
+
+NB: For the boot.command file that easily boots the work's software to run properly, SuperCollider must be in your Applications directory. The path will look like so:
+
+`~/Applications/SuperCollider.app`
+
+Download the github repository by opening terminal and pasting:
 
 `git clone https://github.com/eclemmon/toy_5.git`
 
 or by clicking <a href=https://github.com/eclemmon/toy_5/archive/refs/heads/master.zip>here</a>.
 
-Once the files have been downloaded, navigate to the `/toy_5/super_collider_files/` directory and double click on the `boot.command` shell script to run the software. Then, simply follow the instructions in the score and in the SuperCollider files.
+Once the files have been downloaded, navigate to `/toy_5/super_collider_files/` directory and double click on the `boot.command` shell script to run the software. Then, simply follow the instructions in the score and in the SuperCollider files.
+
 It is recommended that the bass part is performed by maximum two players, and the chimes parts maximum four. The granulation part should be played by one or two players.
 
 This software has been tested on SuperCollider 3.12, and macOS 12.0.1 (Monterey), but it should work on older versions of macOS as well as long as a recent, stable version of SuperCollider has been installed.
