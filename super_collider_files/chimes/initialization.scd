@@ -115,6 +115,8 @@ SynthDef(\hermannKlank, {
 ~progression;
 
 ~progressBarIndex = 0;
+~progressBarWarningText = 3;
+~progressBarStopText = 5;
 
 
 // Initialize buffers and synths for playback.
@@ -141,8 +143,24 @@ b.getn(0, b.numFrames, {|msg| msg.postln});
 		b.getn(0, b.numFrames, {|msg| msg.postln});
 
 		{
-			~progressBar[~progressBarIndex].background = Color.yellow;
-			~progressBarIndex = ~progressBarIndex + 1;
+			if (~progressBarIndex <= 128) {
+				if ((~progressBarIndex <= 82) || (~progressBarIndex > 90)) {
+					~progressBar[~progressBarIndex].background = Color.green;
+				} {
+					if (~progressBarIndex <= 85) {
+						~progressBar[~progressBarIndex].background = Color.yellow;
+						~progressBar[~progressBarIndex].string = ~progressBarWarningText.asString;
+						~progressBarWarningText = ~progressBarWarningText - 1;
+					} {
+						~progressBar[~progressBarIndex].background = Color.red;
+						~progressBar[~progressBarIndex].string = ~progressBarStopText.asString;
+						~progressBarStopText = ~progressBarStopText - 1;
+					};
+				};
+
+
+				~progressBarIndex = ~progressBarIndex + 1;
+			};
 		}.defer;
 
 	}); // this is where the Task ends
@@ -156,9 +174,14 @@ b.getn(0, b.numFrames, {|msg| msg.postln});
 	var phraseNo = 0;
 	~tFuncArray.do({arg aTask, i;
 		// aTask.postln;
-		if(i % 32 == 0) {
-			"Phrase ".catArgs(phraseNo, " is complete.").postln;
-			phraseNo = phraseNo + 1;
+		if (i % 32 == 0) {
+			if(phraseNo == 0) {
+				"The piece has started.".postln;
+				phraseNo = phraseNo + 1;
+			} {
+				"Phrase ".catArgs(phraseNo, " is complete.").postln;
+				phraseNo = phraseNo + 1;
+		};
 		} { "Phrase" };
 		aTask.play;
 		3.wait;

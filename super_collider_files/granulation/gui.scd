@@ -27,8 +27,8 @@ s.waitForBoot {
 	compView.decorator.nextLine;
 
 	// Build Progressbar
-	~progressBar = Array.fill(~urprog.size * 3, {arg i;
-		StaticText(compView, (compView.bounds.width - 300) / (~urprog.size * 3)@90).background_(Color.gray(gray: 1, alpha: 0.2));
+	~progressBar = Array.fill(~urprog.size * 4, {arg i;
+		StaticText(compView, (compView.bounds.width - 300) / (~urprog.size * 4)@40).background_(Color.gray(gray: 1, alpha: 0.2));
 	});
 
 	// Quit Button

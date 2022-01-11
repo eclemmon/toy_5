@@ -27,12 +27,12 @@ s.waitForBoot {
 	compView.decorator.nextLine;
 
 	// Build Progressbar
-	~progressBar = Array.fill(~urprog.size * 3, {arg i;
-		StaticText(compView, (compView.bounds.width - 300) / (~urprog.size * 3)@90).background_(Color.gray(gray: 1, alpha: 0.2));
+	~progressBar = Array.fill(~urprog.size * 4, {arg i;
+		StaticText(compView, (compView.bounds.width - 300) / (~urprog.size * 4)@40).background_(Color.gray(gray: 1, alpha: 0.2));
 	});
 
 	// Quit Button
-	quitButton = Button(compView, 200@90)
+	quitButton = Button(compView, 200@40)
 	.states_([["QUIT", Color.blue(alpha: 0.5), Color.green(alpha: 0.2)]])
 	.font_(Font("Impact", 30))
 	.action_({
